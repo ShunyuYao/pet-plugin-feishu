@@ -9,7 +9,7 @@
 
 ### 安装与兼容
 
-需要 **吐梨邦 0.21.0 或更高版本，且包含 `host:feishu` 兼容接口**。迁移首次发布时，配套宿主源码已适配；正式宿主安装包需另行发布。旧版本有同名内置插件，请先升级，不要覆盖安装。
+需要 **吐梨邦 0.21.0 或更高版本，且包含 `host:feishu` 兼容接口**。宿主目前处于测试阶段，请通过受邀测试渠道获取。旧版本有同名内置插件，请先升级，不要覆盖安装。
 
 1. 在吐梨邦打开「设置 → 插件 → 市场」。
 2. 选择「飞书」，查看权限后安装。
@@ -71,7 +71,7 @@ The official marketplace Feishu integration for 吐梨邦 (Desktop Pet). **Insta
 
 ### Installation and compatibility
 
-Requires **Desktop Pet 0.21.0+ with the `host:feishu` compatibility capability**. At the initial migration release, the companion host source has been adapted; its production installer is released separately. Older hosts contain a built-in plugin with the same ID: upgrade first rather than overwriting it.
+Requires **Desktop Pet 0.21.0+ with the `host:feishu` compatibility capability**. The host is currently in testing and is available through invitation-only testing channels. Older hosts contain a built-in plugin with the same ID: upgrade first rather than overwriting it.
 
 1. Open Settings → Plugins → Marketplace in Desktop Pet.
 2. Select Feishu, review the permissions, and install.
