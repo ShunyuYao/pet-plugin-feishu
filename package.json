@@ -1,0 +1,20 @@
+{
+  "name": "pet-plugin-feishu",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Official marketplace Feishu integration for 吐梨邦 / Desktop Pet",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "python3 scripts/build-plugin.py",
+    "test": "npm run test:gate",
+    "test:gate": "npm run test:token-refresh && npm run test:legacy-migration && npm run test:connection && npm run test:login && npm run test:build",
+    "test:token-refresh": "node tests/feishu-token-refresh-test.js",
+    "test:legacy-migration": "node tests/feishu-legacy-token-migration-test.js",
+    "test:connection": "node tests/feishu-connection-consistency-test.js",
+    "test:login": "node --test tests/login.test.js",
+    "test:build": "python3 -m unittest discover -s tests -p 'test_*.py' -v"
+  }
+}

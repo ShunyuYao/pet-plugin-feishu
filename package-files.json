@@ -1,0 +1,10 @@
+[
+  "manifest.json",
+  "index.js",
+  "lib/auth.js",
+  "lib/calendar.js",
+  "lib/contacts.js",
+  "lib/ctx.js",
+  "lib/im.js",
+  "lib/report.js"
+]

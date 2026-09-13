@@ -1,0 +1,29 @@
+{
+  "id": "feishu",
+  "name": "飞书",
+  "version": "1.1.0",
+  "minHostVersion": "0.21.0",
+  "kind": [
+    "tool",
+    "service"
+  ],
+  "permissions": [
+    "net:open.feishu.cn",
+    "net:accounts.feishu.cn",
+    "net:passport.feishu.cn",
+    "secrets",
+    "scheduler",
+    "auth-window",
+    "pet",
+    "tools",
+    "calendar-provider",
+    "host:feishu"
+  ],
+  "provides": {
+    "service": "feishu"
+  },
+  "entry": {
+    "tool": "index.js"
+  },
+  "apiVersion": 1
+}
