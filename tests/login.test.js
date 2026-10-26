@@ -3,15 +3,15 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const ctx = require('../lib/ctx');
 const auth = require('../lib/auth');
-function setup({ failWindow = false, cancel = false, autoCreate = false } = {}) {
+function setup({ failWindow = false, cancel = false, autoCreate = false, authorizationUrl = 'https://accounts.feishu.cn/test' } = {}) {
   const config = { feishu: autoCreate ? {} : { appId: 'synthetic-app', appSecret: 'synthetic-secret' } };
   let token = null, closed = false, onClosed, saves = 0;
-  const requests = [], progress = [];
+  const requests = [], progress = [], loadedUrls = [];
   const pet = {
     host: { getConfig: () => config, saveConfig: async () => { saves++; }, sendToWin() {}, sendToSettings(channel, value) { progress.push([channel, value.text]); } },
     secrets: { get: async () => token, set: async (_, value) => { token = value; return true; }, delete: async () => { token = null; return true; } },
     auth: { openAuthWindow: () => ({
-      async loadURL() { if (failWindow) throw new Error('synthetic window failed'); if (cancel) { closed = true; onClosed(); } },
+      async loadURL(url) { loadedUrls.push(url); if (failWindow) throw new Error('synthetic window failed'); if (cancel) { closed = true; onClosed(); } },
       isDestroyed: () => closed, onClosed(fn) { onClosed = fn; }, close() { closed = true; }, focus() {}
     }) },
     scheduler: { every: async () => 'test-schedule', cancel: async () => true },
@@ -23,14 +23,14 @@ function setup({ failWindow = false, cancel = false, autoCreate = false } = {}) 
       if (url.endsWith('/app/registration')) body = form.get('action') === 'begin'
         ? { device_code: 'synthetic-reg', verification_uri_complete: 'https://open.feishu.cn/page/cli', interval: 1, expires_in: 5 }
         : { client_id: 'synthetic-created', client_secret: 'synthetic-secret', user_info: { open_id: 'synthetic-user' } };
-      else if (url.endsWith('/device_authorization')) body = { device_code: 'synthetic-code', verification_uri: 'https://accounts.feishu.cn/test', interval: 1, expires_in: 5 };
+      else if (url.endsWith('/device_authorization')) body = { device_code: 'synthetic-code', verification_uri: authorizationUrl, interval: 1, expires_in: 5 };
       else if (url.endsWith('/oauth/token')) body = { access_token: 'synthetic-access', refresh_token: 'synthetic-refresh', expires_in: 7200 };
       else body = { code: 0, data: { open_id: 'synthetic-user', items: [] } };
       return { status: 200, body: JSON.stringify(body) };
     } }
   };
   ctx.init(pet);
-  return { config, requests, progress, token: () => token, closed: () => closed, saves: () => saves };
+  return { config, requests, progress, loadedUrls, token: () => token, closed: () => closed, saves: () => saves };
 }
 test('OAuth window failures surface and never persist a token', async () => {
   const state = setup({ failWindow: true }); await auth.logout();
@@ -56,5 +56,16 @@ test('Auto-created application persists settings before device authorization', a
   const result = await auth.feishuLogin();
   assert.equal(result.ok, true); assert.equal(state.config.feishu.appId, 'synthetic-created');
   assert.ok(state.saves() > 0); assert.equal(state.token().open_id, 'synthetic-user');
+  await auth.logout();
+});
+test('Official login domain is declared and device verification uses the returned URL', async () => {
+  const manifest = require('../manifest.json');
+  assert.ok(manifest.permissions.includes('net:login.feishu.cn'));
+  assert.ok(!manifest.permissions.includes('net:*.feishu.cn'));
+  const authorizationUrl = 'https://login.feishu.cn/accounts/page/login?user_code=synthetic-code';
+  const state = setup({ authorizationUrl }); await auth.logout();
+  assert.equal((await auth.feishuLogin()).ok, true);
+  assert.deepEqual(state.loadedUrls, [authorizationUrl]);
+  assert.equal(state.closed(), true);
   await auth.logout();
 });

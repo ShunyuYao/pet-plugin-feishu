@@ -2,8 +2,8 @@
   "id": "feishu",
   "name": "飞书",
   "description": "连接飞书日历和消息，提供会议提醒、日程管理与消息发送。",
-  "version": "1.1.0",
-  "minHostVersion": "0.21.0",
+  "version": "1.1.1",
+  "minHostVersion": "0.29.0",
   "kind": [
     "tool",
     "service"
@@ -11,6 +11,7 @@
   "permissions": [
     "net:open.feishu.cn",
     "net:accounts.feishu.cn",
+    "net:login.feishu.cn",
     "net:passport.feishu.cn",
     "secrets",
     "scheduler",

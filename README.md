@@ -9,7 +9,7 @@
 
 ### 安装与兼容
 
-需要 **吐梨邦 0.21.0 或更高版本，且包含 `host:feishu` 兼容接口**。宿主目前处于测试阶段，请通过受邀测试渠道获取。旧版本有同名内置插件，请先升级，不要覆盖安装。
+需要 **吐梨邦 0.29.0 或更高版本**，以支持飞书官方登录域名及授权页重定向。宿主目前处于测试阶段，请通过受邀测试渠道获取。旧版本有同名内置插件，请先升级，不要覆盖安装。
 
 1. 在吐梨邦打开「设置 → 插件 → 市场」。
 2. 选择「飞书」，查看权限后安装。
@@ -33,6 +33,7 @@
 | --- | --- |
 | `net:open.feishu.cn` | 飞书日历、通讯录、消息和 token API |
 | `net:accounts.feishu.cn` | 应用创建与设备授权 |
+| `net:login.feishu.cn` | 飞书官方登录页重定向 |
 | `net:passport.feishu.cn` | 飞书登录网页跳转 |
 | `secrets` | 使用宿主加密仓保存 token，不明文写入源码或配置 |
 | `scheduler` | 日历轮询和定时报告 |
@@ -42,6 +43,8 @@
 | `host:feishu` | 连接现有飞书设置、登录进度与旧凭据迁移 |
 
 `host:feishu` 是单独授权的迁移兼容权限，不是通用 SDK 的冻结接口，也不把插件标记为内置。宿主只交出 `config.feishu`，只允许飞书状态/进度消息及 `feishu-token.json` 旧文件迁移。App Secret 由宿主配置加密仓保存，token 通过 `pet.secrets` 保存；插件不直接读取电脑文件或执行系统命令。
+
+1.1.1 新增 `net:login.feishu.cn` 权限。升级时需在宿主弹窗中同意新增网络权限；拒绝后插件不会启用。宿主和插件分别更新，仅升级宿主不会补齐已安装插件的权限声明。插件包发布并更新市场登记后，才能通过市场获取此修复。
 
 日历、收件人及要发送的消息按功能需要提交到飞书。是否送给 AI 取决于用户使用的宿主 AI 功能和配置；本插件没有独立遥测服务。卸载停止插件进程、日历数据源、任务与授权窗；卸载的数据保留策略由宿主管理。退出登录清除本地 token，**不等于在飞书服务端撤销授权**；服务端授权请在飞书管理页面处理。
 
@@ -71,7 +74,7 @@ The official marketplace Feishu integration for 吐梨邦 (Desktop Pet). **Insta
 
 ### Installation and compatibility
 
-Requires **Desktop Pet 0.21.0+ with the `host:feishu` compatibility capability**. The host is currently in testing and is available through invitation-only testing channels. Older hosts contain a built-in plugin with the same ID: upgrade first rather than overwriting it.
+Requires **Desktop Pet 0.29.0+** for the official Feishu sign-in domain and authorization-page redirects. The host is currently in testing and is available through invitation-only testing channels. Older hosts contain a built-in plugin with the same ID: upgrade first rather than overwriting it.
 
 1. Open Settings → Plugins → Marketplace in Desktop Pet.
 2. Select Feishu, review the permissions, and install.
@@ -94,6 +97,7 @@ The [official registry](https://github.com/ShunyuYao/pet-plugin-registry) suppli
 | --- | --- |
 | `net:open.feishu.cn` | Calendar, contacts, messages, and token APIs |
 | `net:accounts.feishu.cn` | Application registration and device authorization |
+| `net:login.feishu.cn` | Redirects to the official Feishu sign-in page |
 | `net:passport.feishu.cn` | Feishu sign-in page navigation |
 | `secrets` | Token storage through the host's encrypted secret store |
 | `scheduler` | Calendar polling and scheduled reports |
@@ -103,6 +107,8 @@ The [official registry](https://github.com/ShunyuYao/pet-plugin-registry) suppli
 | `host:feishu` | Existing Feishu settings, login progress, and legacy credential migration |
 
 `host:feishu` is a separately consented migration capability, not a frozen general SDK interface or built-in status. It exposes only `config.feishu`, the Feishu status/progress channels, and migration of the legacy `feishu-token.json` file. The host encrypts the App Secret in its configuration vault; tokens use `pet.secrets`. The plugin does not directly access local files or execute system commands.
+
+Version 1.1.1 adds `net:login.feishu.cn`. The host requests consent for this new network permission during upgrade; denial leaves the plugin disabled. The host and plugin update separately, so upgrading the host alone does not add permissions to an installed plugin's manifest. Marketplace delivery requires publishing the plugin package and updating its registry entry.
 
 Calendar data, recipients, and messages are sent to Feishu as needed. Data passed to AI depends on the host features and AI configuration you use; this plugin has no separate telemetry service. Uninstalling stops its process, calendar provider, schedules, and authorization windows; the host controls data retention on removal. Signing out clears local tokens; **it does not revoke the authorization on Feishu's servers**. Manage server-side authorization in Feishu.
 
